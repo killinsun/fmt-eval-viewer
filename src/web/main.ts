@@ -1,3 +1,4 @@
+import { Buffer } from "buffer";
 import {
   applyJudgments,
   downloadFmtEvalStore,
@@ -14,6 +15,8 @@ import {
 } from "./session";
 import "./ui.css";
 
+globalThis.Buffer = globalThis.Buffer ?? Buffer;
+
 let store: FmtEvalStore | null = null;
 let filteredRows: FmtEvalRow[] = [];
 let selected: number | null = null;
@@ -28,6 +31,7 @@ const els = {
   saveStatus: document.getElementById("saveStatus")!,
   btnDownload: document.getElementById("btnDownload") as HTMLButtonElement,
   btnReopen: document.getElementById("btnReopen") as HTMLButtonElement,
+  btnSelectFile: document.getElementById("btnSelectFile") as HTMLButtonElement,
   filter: document.getElementById("filter") as HTMLSelectElement,
   q: document.getElementById("q") as HTMLInputElement,
   list: document.getElementById("list")!,
@@ -278,23 +282,56 @@ async function openFile(file: File): Promise<void> {
 }
 
 function setupUpload(): void {
+  els.btnSelectFile.addEventListener("click", () => {
+    els.fileInput.click();
+  });
+
   els.fileInput.addEventListener("change", () => {
     const file = els.fileInput.files?.[0];
     if (file) void openFile(file);
   });
 
-  els.dropzone.addEventListener("dragover", (e) => {
+  let dragDepth = 0;
+
+  const allowDrop = (e: DragEvent): void => {
     e.preventDefault();
-    els.dropzone.classList.add("dragover");
-  });
-  els.dropzone.addEventListener("dragleave", () => {
+    e.stopPropagation();
+  };
+
+  const onDragEnter = (e: DragEvent): void => {
+    allowDrop(e);
+    if (!e.dataTransfer?.types.includes("Files")) return;
+    dragDepth++;
+    if (dragDepth === 1) els.dropzone.classList.add("dragover");
+  };
+
+  const onDragLeave = (e: DragEvent): void => {
+    allowDrop(e);
+    const related = e.relatedTarget as Node | null;
+    if (related && els.uploadScreen.contains(related)) return;
+    dragDepth = 0;
     els.dropzone.classList.remove("dragover");
-  });
-  els.dropzone.addEventListener("drop", (e) => {
-    e.preventDefault();
+  };
+
+  const onDrop = (e: DragEvent): void => {
+    allowDrop(e);
+    dragDepth = 0;
     els.dropzone.classList.remove("dragover");
     const file = e.dataTransfer?.files?.[0];
     if (file) void openFile(file);
+  };
+
+  els.uploadScreen.addEventListener("dragenter", onDragEnter);
+  els.uploadScreen.addEventListener("dragover", allowDrop);
+  els.uploadScreen.addEventListener("dragleave", onDragLeave);
+  els.uploadScreen.addEventListener("drop", onDrop);
+
+  // 画面外にドロップしたときブラウザがファイルを開かないようにする
+  document.addEventListener("dragover", (e) => {
+    if (!els.uploadScreen.classList.contains("hidden")) allowDrop(e);
+  });
+  document.addEventListener("drop", (e) => {
+    if (!els.uploadScreen.classList.contains("hidden")) allowDrop(e);
   });
 
   els.btnReopen.addEventListener("click", () => {

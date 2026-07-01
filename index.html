@@ -21,7 +21,7 @@
         <h2>記入 CSV / xlsx をドロップ</h2>
         <p>ファイルはブラウザ内だけで処理されます（サーバーに送信しません）</p>
         <p>人間評価（BM/BK列）のみ localStorage に自動保存され、同じファイルを再度開くと復元できます</p>
-        <button type="button" onclick="document.getElementById('fileInput').click()">ファイルを選択</button>
+        <button type="button" id="btnSelectFile">ファイルを選択</button>
         <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" class="hidden" />
       </div>
     </div>
