@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FMT 人間評価</title>
+  </head>
+  <body>
+    <header>
+      <h1>FMT 人間評価</h1>
+      <div class="meta" id="headerMeta">ファイルを選択してください</div>
+      <div class="header-actions">
+        <span class="save-status" id="saveStatus"></span>
+        <button type="button" class="secondary hidden" id="btnReopen">別ファイル</button>
+        <button type="button" class="secondary hidden" id="btnDownload" disabled>ダウンロード</button>
+      </div>
+    </header>
+
+    <div id="uploadScreen" class="upload-screen">
+      <div class="dropzone" id="dropzone">
+        <h2>記入 CSV / xlsx をドロップ</h2>
+        <p>ファイルはブラウザ内だけで処理されます（サーバーに送信しません）</p>
+        <p>人間評価（BM/BK列）のみ localStorage に自動保存され、同じファイルを再度開くと復元できます</p>
+        <button type="button" onclick="document.getElementById('fileInput').click()">ファイルを選択</button>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" class="hidden" />
+      </div>
+    </div>
+
+    <main id="appMain" class="hidden">
+      <aside>
+        <div class="panel-title">テストケース</div>
+        <div class="filters">
+          <label class="field">フィルタ
+            <select id="filter">
+              <option value="all">すべて</option>
+              <option value="pending">未評価</option>
+              <option value="done">評価済み</option>
+              <option value="fail">スコアチェック FAIL</option>
+            </select>
+          </label>
+          <label class="field">検索
+            <input id="q" placeholder="FMT# / 小カテゴリ..." />
+          </label>
+        </div>
+        <div class="list" id="list"></div>
+      </aside>
+      <div class="center">
+        <div class="panel-title">会話ログ</div>
+        <div class="center-body" id="center"><div class="empty">左から選択</div></div>
+      </div>
+      <div class="eval">
+        <div class="panel-title">人間評価</div>
+        <div class="eval-body" id="eval"><div class="empty">左から選択</div></div>
+      </div>
+    </main>
+
+    <script type="module" src="/src/web/main.ts"></script>
+  </body>
+</html>
