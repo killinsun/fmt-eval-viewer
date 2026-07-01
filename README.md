@@ -39,14 +39,39 @@ bun run dev
 
 ### Vercel デプロイ
 
-Vercel プロジェクト設定:
+**リポジトリ**: https://github.com/killinsun/fmt-eval-viewer
+
+#### 初回セットアップ（Vercel ダッシュボード）
+
+1. https://vercel.com/new/import?repository-url=https://github.com/killinsun/fmt-eval-viewer を開く
+2. GitHub 連携を許可し、リポジトリ `killinsun/fmt-eval-viewer` を Import
+3. 設定は `vercel.json` が自動適用されます（変更不要）
+4. Deploy → 本番 URL が発行されます
 
 | 項目 | 値 |
 |------|-----|
-| Root Directory | `fmt-eval-viewer` |
+| Framework | Vite |
 | Build Command | `bun run build` |
 | Output Directory | `dist` |
 | Install Command | `bun install` |
+
+#### CLI からデプロイする場合
+
+```bash
+cd fmt-eval-viewer
+npx vercel login
+npx vercel --prod
+```
+
+#### GitHub Actions（任意）
+
+`.github/workflows/vercel-deploy.yml` あり。Secrets に以下を登録すると push で自動デプロイ:
+
+- `VERCEL_TOKEN`
+- `VERCEL_ORG_ID`
+- `VERCEL_PROJECT_ID`
+
+（`vercel link` 後に `.vercel/project.json` で確認できます）
 
 ---
 
